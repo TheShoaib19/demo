@@ -23,7 +23,13 @@ Route::get('/dashboard', function () {
 Route::view('newUser', '/user.addUser')->name('newForm')->middleware('auth');  //Shows the file addUser.blade.php when the newUser
                                                     // route is hit
 Route::post('addUser', [UserController::class, 'addUser'])->name('add')->middleware('auth');
-Route::get('/users', [UserController::class, 'index'])->name('users')->middleware('auth');
+
+
+
+Route::get('/users', [UserController::class, 'index1'])->name('users')->middleware('auth');
+Route::post('/users/getUsers/',[UserController::class, 'getUsers'])->name('getUsers');
+
+
 Route::delete('delete-all', [UserController::class, 'removeMulti'])->middleware('auth');
 Route::get('/view/{id}', [UserController::class, 'updateForm'])->name('updateForm')->middleware('auth'); //shows the 
             //'updateUser.blade.php. when it is called, meaning the form with filled values

@@ -8,6 +8,7 @@ use App\Http\Requests\UserUpdateRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class UserController extends Controller
 {
@@ -83,11 +84,75 @@ class UserController extends Controller
         return view('user.index', $data);
     }
 
+    public function index1(){
+        return view('user.index');
+    }
+    // AJAX request
+    public function getUsers(Request $request){
+        $draw = $request->get('draw');
+        $start = $request->get('start');
+        $rowperpage = $request->get('length');
+
+        $columnIndex_arr = $request->get('order');
+        $columnName_arr = $request->get('columns');
+        $order_arr = $request->get('order');
+        $search_arr = $request->get('search');
+
+        $columnIndex = $columnIndex_arr[0]['column']; // Column index
+        $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+        $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+        $searchValue = $search_arr['value']; // Search value
+
+     // Total records
+        $totalRecords = User::select('count(*) as allcount')->count();
+        $totalRecordswithFilter = User::select('count(*) as allcount')->where('first_name', 'like', '%' .$searchValue . '%')->count();
+
+     // Fetch records
+        $records = User::orderBy($columnName,$columnSortOrder)->where('users.first_name', 'like', '%' .$searchValue . '%')
+        ->select('users.*')
+        ->skip($start)
+        ->take($rowperpage)
+        ->get();
+
+        $data_arr = array();
+     
+        foreach($records as $record){
+            $id = $record->id;
+            $first_name = $record->first_name;
+            $last_name = $record->last_name;
+            $email = $record->email;
+            $age = $record->age;
+            $phone = $record->phone;
+
+            $data_arr[] = array(
+            "id" => $id,
+            "first_name" => $first_name,
+            "last_name" => $last_name,
+            "email" => $email,
+            "age" => $age,
+            "phone" => $phone,
+            "view" => '<a href="'.route('updateForm', $id).'"class="btn btn-primary btn-sm">View</a>',
+            "delete" => '<a href="'.route('deleteUser', $id).'"class="btn btn-danger btn-sm">Delete</a>',
+            "checkbox" => '<input type="checkbox" class="checkbox" data-id="'.$id.'">'
+            );
+        }
+        $response = array(
+            "draw" => intval($draw),
+            "iTotalRecords" => $totalRecords,
+            "iTotalDisplayRecords" => $totalRecordswithFilter,
+            "aaData" => $data_arr
+        );
+        echo json_encode($response);
+        exit;
+    }
     public function removeMulti(Request $request)
     {
-        $ids = $request->ids;
-        User::whereIn('id',explode(",",$ids))->delete();
-        return response()->json(['status'=>true,'message'=>"User successfully removed."]);
-         
+        try {
+            $ids = $request->ids;
+            User::whereIn('id',explode(",",$ids))->delete();
+            return response()->json(['status'=>true,'message'=>"User successfully removed."] , 200);
+        } catch (Throwable $th){
+            return response()->json(['status'=>false,'message'=>$th->getMessage()] , 422);
+        }
     }
 }

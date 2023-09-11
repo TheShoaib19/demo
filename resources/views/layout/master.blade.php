@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>AdminLTE 3 | Dashboard</title>
     @include('includes.css')
-
+    @include('includes.js')
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -20,6 +20,6 @@
             @yield('content')
         </div>
     </div>
-    @include('includes.js')
+
 </body>
 </html>

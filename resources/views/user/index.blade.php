@@ -16,16 +16,10 @@
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                @if ($message = Session::get('success'))
-                    <div class="alert alert-info">
-                        <p>{{ $message }}</p>
-                    </div>
-                @endif
                 <table id="users" class="table table-striped table-bordered nowrap" style="width:100%">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" id="checkboxesMain"></th>
-                            <th>Id</th>
+                            <th>ID</th>
                             <th>First Name</th>
                             <th>Last Name</th>
                             <th>Email</th>
@@ -33,28 +27,97 @@
                             <th>Phone</th>
                             <th>View</th>
                             <th>Delete</th>
+                            <th><input type="checkbox" id="checkboxesMain"></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @if ($users->count())
-                            @foreach ($users as $key => $user)
-                                <tr id="tr_{{ $user->id }}">
-                                    <td><input type="checkbox" class="checkbox" data-id="{{ $user->id }}"></td>
-                                    <td>{{ $user->id }}</td>
-                                    <td>{{ $user->first_name }}</td>
-                                    <td>{{ $user->last_name }}</td>
-                                    <td>{{ $user->email }}</td>
-                                    <td>{{ $user->age }}</td>
-                                    <td>{{ $user->phone }}</td>
-                                    <td><a href="{{ route('updateForm', $user->id) }}" class="btn btn-primary btn-sm">View</a></td>
-                                    <td><a href="{{ route('deleteUser', $user->id) }}" class="btn btn-danger btn-sm">Delete</a></td>
-                                </tr>
-                            @endforeach
-                        @endif
-                    </tbody>
                 </table>
             </div>
         </div>
     </div>
-
+    <script>
+        new DataTable('#users',{
+          processing: true,
+          serverSide: true,
+          responsive: true,
+          ajax: {
+            url: "{{route('getUsers')}}",
+            type: "POST",
+            dataType: "JSON",
+            data: {
+                _token : "{{ csrf_token() }}"
+            }
+            },
+            columnDefs: [
+                {
+                    targets: [ -1, -2, -3 ],
+                    orderable: false
+                }
+            ],
+          columns: [
+              { data: 'id' },
+              { data: 'first_name' },
+              { data: 'last_name' },
+              { data: 'email' },
+              { data: 'age' },
+              { data: 'phone' },
+              { data: 'view'},
+              { data: 'delete'},
+              { data: 'checkbox'}
+      ]
+        });
+      </script>
+      <script type="text/javascript">
+        $(document).ready(function() {
+            $('#checkboxesMain').on('click', function(e) {
+                if ($(this).is(':checked', true)) {
+                    $(".checkbox").prop('checked', true);
+                } else {
+                    $(".checkbox").prop('checked', false);
+                }
+            });
+      
+            $('.checkbox').on('click', function() {
+                if ($('.checkbox:checked').length == $('.checkbox').length) {
+                    $('#checkboxesMain').prop('checked', true);
+                } else {
+                    $('#checkboxesMain').prop('checked', false);
+                }
+            });
+            $('.removeAll').on('click', function(e) {
+                var userIdArr = [];
+                $(".checkbox:checked").each(function() {
+                    userIdArr.push($(this).attr('data-id'));
+                });
+                if (userIdArr.length <= 0) {
+                    alert("Choose min one item to remove.");
+                } else {
+                    if (confirm("Are you sure?")) {
+                        var stuId = userIdArr.join(",");
+                        $.ajax({
+                            url: "{{ url('delete-all') }}",
+                            type: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            data: 'ids=' + stuId,
+                            success: function(data) {
+                                if (data['status'] == true) {
+                                    $(".checkbox:checked").each(function() {
+                                        $(this).parents("tr").remove();
+                                    });
+                                    alert(data['message']);
+                                } else {
+                                    alert('Error occured.');
+                                }
+                            },
+                            error: function(data) {
+                                alert(data.responseText);
+                            }
+                        });
+                    }
+                }
+            });
+        });
+      </script>
+    
 @endsection()

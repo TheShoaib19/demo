@@ -111,7 +111,6 @@
 <body>
     <div class="wrapper">
         <h2>Log in</h2>
-        <span>{{ session()->get('errors') }}</span>
         <form action="{{ route('loginStore') }}" method="POST">
             @csrf
             <div class="input-box">
@@ -119,6 +118,11 @@
             </div>
             <div class="input-box">
                 <input type="password" placeholder="Enter password" required name="password" value="{{ old('password') }}">
+            </div>
+            <div class="text-danger">
+                @if (!empty(session()->get('errors')))
+                    {{ implode(' ' ,session()->get('errors')->get('email')) }}
+                @endif
             </div>
             <div class="input-box button">
                 <input type="Submit" value="Log In">
