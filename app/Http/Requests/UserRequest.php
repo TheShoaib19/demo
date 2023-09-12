@@ -22,12 +22,13 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => 'required',
-            'last_name' => 'required', 
-            'email' => 'required|email|unique:users,email',
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255', 
+            'email' => 'required|max:255|email|unique:users,email',
             'age' => 'required|numeric',
-            'password' => 'required',
-            'phone' => 'required|numeric'
+            'password' => 'required|min:4|max:255',
+            'confirm_password' => 'min:4|max:255|same:password',
+            'phone' => 'required|max:11'
         ];
     }
 
@@ -39,7 +40,7 @@ class UserRequest extends FormRequest
             'age.required' => 'Age is required.',
             'age.numeric' => 'Age must be a number.',
             'password.required' => 'Password is required.',
-            'phone.required' => 'Phone is required.'
+            'phone.required' => 'Phone is required.',
         ];
     }
 }

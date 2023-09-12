@@ -53,13 +53,22 @@
                             </span>
                         </div>
                         <div class="mb-3">
+                            <label class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control @error('confirm_password') is-invalid @enderror" name="confirm_password">
+                            <span class="text-danger">
+                                @error('confirm_password')
+                                    {{ $message }}
+                                @enderror
+                            </span>
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label">Phone</label>
                             <input type="number" value="{{ old('phone') }}" class="form-control @error('phone') is-invalid @enderror" name="phone">
                             <span class="text-danger">
                                 @error('phone')
                                     {{ $message }}
                                 @enderror
-                            </span>
+                            </span> 
                         </div>
                         <div class="mb-3">
                             <label class="form-label"></label>

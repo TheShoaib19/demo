@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+
+use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
 use App\Http\Requests\UserUpdateRequest;
@@ -21,19 +23,24 @@ class UserController extends Controller
     //$req->first_name hai, ye 'addUser.blade.php' main jo name hai wo hai idhr
     //'first_name' table ka column name hai
     public function addUser(UserRequest $req){
-        $user = User::create([
-            'first_name' => $req->first_name,
-            'last_name' => $req->last_name, 
-            'email' => $req->email,
-            'age' => $req->age,
-            'password' => $req->password,
-            'phone' => $req->phone
-        ]);
-        if($user){
-            return redirect()->route('users');
+        try{
+            $user = User::create([
+                'first_name' => $req->first_name,
+                'last_name' => $req->last_name, 
+                'email' => $req->email,
+                'age' => $req->age,
+                'password' => $req->password,
+                'phone' => $req->phone
+            ]);
+            if($user){
+                return redirect()->route('users');
+            }
+            else{
+                echo "<h1>Data Not Added</h1>";
+            }
         }
-        else{
-            echo "<h1>Data Not Added</h1>";
+        catch(Throwable $th){
+            return redirect()->back()->with('user_add' , $th->getMessage());
         }
     }
 
@@ -45,46 +52,32 @@ class UserController extends Controller
     }
 
     public function updateUser(UserUpdateRequest $req, $id){
-        $user = [
-            'first_name' => $req->first_name,
-            'last_name' => $req->last_name, 
-            'email' => $req->email,
-            'age' => $req->age,
-            'password' => $req->password,
-            'phone' => $req->phone
-        ];
-        User::where('id' , $id)->update($user);
-        
-        if($user){
-            return redirect()->route('users');
-        }
-        else{
-            return redirect()->route('users');
-        }
-    }
-
-    public function deleteUser(string $id){
-        $user = DB::table('users')->where('id', $id)->delete();
-        if($user){
-            return redirect()->route('users');
-        }
-    }
-
-    public function deleteAllUsers(){
-        $user = DB::table('users')->delete(); //using truncate here because delete will not reset the ID column
-                                                //and new data will have the ID of after the last which was deleted
-        if($user){
-            return redirect()->route('users');
+        try {
+            $user = [
+                'first_name' => $req->first_name,
+                'last_name' => $req->last_name, 
+                'email' => $req->email,
+                'age' => $req->age,
+                'phone' => $req->phone
+            ];
+            if($req->has('password') && !empty($req->get('password'))){
+                $user['password'] = Hash::make($req->password);
+            }
+            User::where('id' , $id)->update($user);
+            
+            if($user){
+                return redirect()->route('users');
+            }
+            else{
+                return redirect()->route('users');
+            }
+        } catch (Throwable $th)
+        {
+            return redirect()->back()->with('user_update' , $th->getMessage());
         }
     }
 
-    public function index()
-    {
-        $data['users'] = User::get();
-        return view('user.index', $data);
-    }
-
-    public function index1(){
+    public function index(){
         return view('user.index');
     }
     // AJAX request
@@ -108,7 +101,11 @@ class UserController extends Controller
         $totalRecordswithFilter = User::select('count(*) as allcount')->where('first_name', 'like', '%' .$searchValue . '%')->count();
 
      // Fetch records
-        $records = User::orderBy($columnName,$columnSortOrder)->where('users.first_name', 'like', '%' .$searchValue . '%')
+        $records = User::orderBy($columnName,$columnSortOrder)
+        ->where('users.first_name', 'like', '%' .$searchValue . '%')
+        ->orWhere('users.last_name', 'like', '%' .$searchValue . '%')
+        ->orWhere('users.email', 'like', '%' .$searchValue . '%')
+        ->orWhere('users.age', 'like', '%' .$searchValue . '%')
         ->select('users.*')
         ->skip($start)
         ->take($rowperpage)
@@ -132,8 +129,7 @@ class UserController extends Controller
             "age" => $age,
             "phone" => $phone,
             "view" => '<a href="'.route('updateForm', $id).'"class="btn btn-primary btn-sm">View</a>',
-            "delete" => '<a href="'.route('deleteUser', $id).'"class="btn btn-danger btn-sm">Delete</a>',
-            "checkbox" => '<input type="checkbox" class="checkbox" data-id="'.$id.'">'
+            "checkbox" => '<input type="checkbox" class="checkbox" onclick="individual()" data-id="'.$id.'">'
             );
         }
         $response = array(

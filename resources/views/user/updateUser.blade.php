@@ -5,6 +5,9 @@
             <div class="col-4"> 
                 <div class="row mb-2">
                     <h1>View Details</h1>
+                    @if (session()->has('user_update'))
+                        {{ session()->get('user_update') }}
+                    @endif
                     <form action="{{ route('updateUser', $data->id) }}" method="POST">
                         @csrf
                         <div class="mb-3">
@@ -40,9 +43,18 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Password</label>
-                            <input type="text" value="{{ $data->password }}" class="form-control @error('city') is-invalid @enderror" name="password">
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" placeholder="Leave Blank Unless You Want to Change Password">
                             <span class="text-danger">
                                 @error('password')
+                                    {{ $message }}
+                                @enderror
+                            </span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control @error('confirm_password') is-invalid @enderror" name="confirm_password">
+                            <span class="text-danger">
+                                @error('confirm_password')
                                     {{ $message }}
                                 @enderror
                             </span>

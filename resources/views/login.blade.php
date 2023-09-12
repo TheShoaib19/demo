@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Form</title>
+    <title>Login Form</title>
+    @include('includes.css')
+    @include('includes.js')
     <style>
         @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
         * {
@@ -110,6 +112,14 @@
 
 <body>
     <div class="wrapper">
+        <div>
+            @if (session()->has('message'))
+                <div class="alert alert-success" id="alert">
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    {{ session()->get('message') }}
+                </div>
+            @endif
+        </div>
         <h2>Log in</h2>
         <form action="{{ route('loginStore') }}" method="POST">
             @csrf
@@ -131,6 +141,13 @@
                 <h3>Don't have an account? <a href="{{ route('register') }}">Register now</a></h3>
             </div>
         </form>
-    </div>
+    </div>    
+    <script type="text/javascript">
+        $("document").ready(function(){
+            setTimeout(function(){
+                $("div.alert").remove();
+            }, 3000);
+        });
+    </script>
 </body>
 </html>

@@ -34,9 +34,9 @@ class RegisteredUserController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'age' => ['required', 'numeric'],
-            'phone' => ['required', 'numeric'],
+            'phone' => ['required', 'max:11'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required'],
+            'password' => ['required', 'min:4', 'max:255'],
             'confirmPassword' => ['required', 'same:password']
         ]);
 
@@ -51,8 +51,8 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+        return redirect()->route('login')->with('message', 'User Registered Successfully');
     }
 }

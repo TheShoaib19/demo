@@ -22,11 +22,12 @@ class UserUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => 'required',
-            'last_name' => 'required', 
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255', 
             'age' => 'required|numeric',
-            'password' => 'required',
-            'phone' => 'required'
+            'password' => 'nullable|min:4|max:255',
+            'confirm_password' => 'nullable|min:4|max:255|same:password',
+            'phone' => 'required|max:11'
         ];
     }
     public function messages()

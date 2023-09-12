@@ -14,38 +14,35 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', function () {
-    return view('layout/master');
-})->middleware('auth');
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware('auth');
-Route::view('newUser', '/user.addUser')->name('newForm')->middleware('auth');  //Shows the file addUser.blade.php when the newUser
+Route::middleware('auth')->group(function () {
+    Route::get('/', function () {
+        return view('layout/master');
+    });
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    });
+    
+    Route::view('newUser', '/user.addUser')->name('newForm');  //Shows the file addUser.blade.php when the newUser
                                                     // route is hit
-Route::post('addUser', [UserController::class, 'addUser'])->name('add')->middleware('auth');
 
-
-
-Route::get('/users', [UserController::class, 'index1'])->name('users')->middleware('auth');
-Route::post('/users/getUsers/',[UserController::class, 'getUsers'])->name('getUsers');
-
-
-Route::delete('delete-all', [UserController::class, 'removeMulti'])->middleware('auth');
-Route::get('/view/{id}', [UserController::class, 'updateForm'])->name('updateForm')->middleware('auth'); //shows the 
-            //'updateUser.blade.php. when it is called, meaning the form with filled values
-Route::post('update/{id}', [UserController::class, 'updateUser'])->name('updateUser')->middleware('auth');
-            //runs when the update is clicked.
-Route::get('/delete/{id}', [UserController::class, 'deleteUser'])->name('deleteUser')->middleware('auth');
-Route::get('deleteAll', [UserController::class, 'deleteAllUsers'])->name('deleteAll')->middleware('auth');  
+    Route::controller(UserController::class)->group(function(){
+        Route::post('addUser','addUser')->name('add');
+        Route::get('/users', 'index')->name('users');
+        Route::post('/users/getUsers/', 'getUsers')->name('getUsers'); 
+        Route::delete('delete-all', 'removeMulti');
+        Route::get('/view/{id}', 'updateForm')->name('updateForm'); //shows the 
+                    //'updateUser.blade.php. when it is called, meaning the form with filled values
+        Route::post('update/{id}', 'updateUser')->name('updateUser');
+                    //runs when the update is clicked.
+        Route::get('/delete/{id}', 'deleteUser')->name('deleteUser');
+        Route::get('deleteAll', 'deleteAllUsers')->name('deleteAll');  
+    });
+});
 
 
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
-Route::middleware('auth')->group(function () {
-    
-
-});
 
 require __DIR__.'/auth.php';

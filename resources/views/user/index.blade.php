@@ -5,9 +5,12 @@
             <div class="row mb-2">
                 <div class="heading">
                     <h1>Users</h1>
+                    @if (session()->has('user_add'))
+                        {{ session()->get('user_add') }}
+                    @endif
                     <div class="topButtons">
-                        <a href="{{ route('newForm') }}" class="btn btn-success btn-sm mr-3">Add New</a>
                         <a class="btn btn-danger btn-sm mr-3 removeAll">Delete Selected</a>
+                        <a href="{{ route('newForm') }}" class="btn btn-success btn-sm mr-3">Add New</a>
                     </div>
                 </div>
             </div>
@@ -19,6 +22,7 @@
                 <table id="users" class="table table-striped table-bordered nowrap" style="width:100%">
                     <thead>
                         <tr>
+                            <th><input type="checkbox" id="checkboxesMain"></th>
                             <th>ID</th>
                             <th>First Name</th>
                             <th>Last Name</th>
@@ -26,8 +30,6 @@
                             <th>Age</th>
                             <th>Phone</th>
                             <th>View</th>
-                            <th>Delete</th>
-                            <th><input type="checkbox" id="checkboxesMain"></th>
                         </tr>
                     </thead>
                 </table>
@@ -39,6 +41,7 @@
           processing: true,
           serverSide: true,
           responsive: true,
+          order: [[1 , 'asc']],
           ajax: {
             url: "{{route('getUsers')}}",
             type: "POST",
@@ -49,20 +52,19 @@
             },
             columnDefs: [
                 {
-                    targets: [ -1, -2, -3 ],
+                    targets: [-1 , 0],
                     orderable: false
                 }
             ],
           columns: [
+              { data: 'checkbox'},
               { data: 'id' },
               { data: 'first_name' },
               { data: 'last_name' },
               { data: 'email' },
               { data: 'age' },
               { data: 'phone' },
-              { data: 'view'},
-              { data: 'delete'},
-              { data: 'checkbox'}
+              { data: 'view'}
       ]
         });
       </script>
@@ -73,14 +75,6 @@
                     $(".checkbox").prop('checked', true);
                 } else {
                     $(".checkbox").prop('checked', false);
-                }
-            });
-      
-            $('.checkbox').on('click', function() {
-                if ($('.checkbox:checked').length == $('.checkbox').length) {
-                    $('#checkboxesMain').prop('checked', true);
-                } else {
-                    $('#checkboxesMain').prop('checked', false);
                 }
             });
             $('.removeAll').on('click', function(e) {
@@ -118,6 +112,13 @@
                 }
             });
         });
+        function individual(){
+            if ($('.checkbox:checked').length == $('.checkbox').length){
+                    $('#checkboxesMain').prop('checked', true);
+            }else{
+                    $('#checkboxesMain').prop('checked', false);
+            }
+        }
       </script>
     
 @endsection()

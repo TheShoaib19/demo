@@ -138,7 +138,7 @@
                 </div>
             </div>
             <div class="input-box mb-4">
-                <input type="text" placeholder="Enter your phone number" name="phone" value="{{ old('phone') }}">
+                <input type="number" placeholder="Enter your phone number" name="phone" value="{{ old('phone') }}">
                 <div class="text-danger">
                     @if (!empty(session()->get('errors')))
                     {{ implode(' ' ,session()->get('errors')->get('phone')) }}
@@ -146,7 +146,7 @@
                 </div>
             </div>
             <div class="input-box mb-4">
-                <input type="text" placeholder="Enter your email" name="email" value="{{ old('email') }}">
+                <input type="email" placeholder="Enter your email" name="email" value="{{ old('email') }}">
                 <div class="text-danger">
                     @if (!empty(session()->get('errors')))
                     {{ implode(' ' ,session()->get('errors')->get('email')) }}
