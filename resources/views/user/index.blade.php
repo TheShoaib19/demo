@@ -1,5 +1,20 @@
 @extends('layout.master')
 @section('content')
+    <div>
+        @if (session()->has('message'))
+            <div class="alert alert-success" id="alert">
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                {{ session()->get('message') }}
+            </div>
+        @endif
+        @if (session()->has('message1'))
+            <div class="alert alert-primary" id="alert">
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                {{ session()->get('message1') }}
+            </div>
+        @endif
+    </div>
+    
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -9,7 +24,7 @@
                         {{ session()->get('user_add') }}
                     @endif
                     <div class="topButtons">
-                        <a class="btn btn-danger btn-sm mr-3 removeAll">Delete Selected</a>
+                        <a class="btn btn-danger btn-sm mr-3 removeAll" id="visible" hidden="true">Delete</a>
                         <a href="{{ route('newForm') }}" class="btn btn-success btn-sm mr-3">Add New</a>
                     </div>
                 </div>
@@ -112,6 +127,15 @@
                 }
             });
         });
+        $(document).on('click', function(){
+            var length = $('.checkbox:checked').length; 
+            if(length == 0){
+                $('#visible').prop('hidden', true);
+            }
+            else{
+                $('#visible').prop('hidden', false);
+            }
+        });
         function individual(){
             if ($('.checkbox:checked').length == $('.checkbox').length){
                     $('#checkboxesMain').prop('checked', true);
@@ -120,5 +144,11 @@
             }
         }
       </script>
-    
+      <script type="text/javascript">
+        $("document").ready(function(){
+            setTimeout(function(){
+                $("div.alert").remove();
+            }, 3000);
+        });
+    </script>
 @endsection()

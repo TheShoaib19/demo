@@ -61,7 +61,15 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Phone</label>
-                            <input type="number" value="{{ $data->phone }}" class="form-control @error('phone') is-invalid @enderror" name="phone">
+                            <select onchange="document.getElementById('phone').value=this.options[this.selectedIndex].text; document.getElementById('idValue').value=this.options[this.selectedIndex].value;">
+                              <option></option>
+                              <option>+92</option>
+                              <option>+44</option>
+                              <option>+1</option>
+                              <option>+32</option>
+                            </select>
+                            <input type="text" maxlength="15" value="{{ $data->phone }}" class="form-control @error('phone') is-invalid @enderror" name="phone" id="phone" placeholder="Enter/Select a country code as well">
+                            <input name="idValue" id="idValue" type="hidden">
                             <span class="text-danger">
                                 @error('phone')
                                     {{ $message }}

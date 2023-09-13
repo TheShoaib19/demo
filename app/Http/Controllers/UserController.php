@@ -33,7 +33,7 @@ class UserController extends Controller
                 'phone' => $req->phone
             ]);
             if($user){
-                return redirect()->route('users');
+                return redirect()->route('users')->with('message', 'User Added Successfully');
             }
             else{
                 echo "<h1>Data Not Added</h1>";
@@ -66,10 +66,7 @@ class UserController extends Controller
             User::where('id' , $id)->update($user);
             
             if($user){
-                return redirect()->route('users');
-            }
-            else{
-                return redirect()->route('users');
+                return redirect()->route('users')->with('message1', 'User Updated Successfully');
             }
         } catch (Throwable $th)
         {
@@ -106,6 +103,7 @@ class UserController extends Controller
         ->orWhere('users.last_name', 'like', '%' .$searchValue . '%')
         ->orWhere('users.email', 'like', '%' .$searchValue . '%')
         ->orWhere('users.age', 'like', '%' .$searchValue . '%')
+        ->orWhere('users.phone', 'like', '%' .$searchValue . '%')
         ->select('users.*')
         ->skip($start)
         ->take($rowperpage)

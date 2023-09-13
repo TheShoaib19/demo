@@ -114,7 +114,7 @@
         <form action="" method="POST">
             @csrf
             <div class="input-box mb-4">
-                <input type="text" placeholder="Enter your first name" name="first_name" value="{{ old('first_name') }}">
+                <input type="text" placeholder="First name" name="first_name" value="{{ old('first_name') }}">
                 <div class="text-danger">
                     @if (!empty(session()->get('errors')))
                     {{ implode(' ' ,session()->get('errors')->get('first_name')) }}
@@ -122,7 +122,7 @@
                 </div>
             </div>
             <div class="input-box mb-4">
-                <input type="text" placeholder="Enter your last name" name="last_name" value="{{ old('last_name') }}">
+                <input type="text" placeholder="Last name" name="last_name" value="{{ old('last_name') }}">
                 <div class="text-danger">
                     @if (!empty(session()->get('errors')))
                     {{ implode(' ' ,session()->get('errors')->get('last_name')) }}
@@ -130,7 +130,7 @@
                 </div>
             </div>
             <div class="input-box mb-4">
-                <input type="text" placeholder="Enter your age" name="age" value="{{ old('age') }}">
+                <input type="text" placeholder="Age" name="age" value="{{ old('age') }}">
                 <div class="text-danger">
                     @if (!empty(session()->get('errors')))
                     {{ implode(' ' ,session()->get('errors')->get('age')) }}
@@ -138,7 +138,13 @@
                 </div>
             </div>
             <div class="input-box mb-4">
-                <input type="number" placeholder="Enter your phone number" name="phone" value="{{ old('phone') }}">
+                <input type="text" maxlength="15" list="codes" placeholder="Phone number with country code" name="phone" value="{{ old('phone') }}" id="phone">
+                <datalist id="codes">
+                    <option>+92</option>
+                    <option>+44</option>
+                    <option>+1</option>
+                    <option>+32</option>
+                </datalist>
                 <div class="text-danger">
                     @if (!empty(session()->get('errors')))
                     {{ implode(' ' ,session()->get('errors')->get('phone')) }}
@@ -146,7 +152,7 @@
                 </div>
             </div>
             <div class="input-box mb-4">
-                <input type="email" placeholder="Enter your email" name="email" value="{{ old('email') }}">
+                <input type="email" placeholder="Email" name="email" value="{{ old('email') }}">
                 <div class="text-danger">
                     @if (!empty(session()->get('errors')))
                     {{ implode(' ' ,session()->get('errors')->get('email')) }}

@@ -25,10 +25,10 @@ class UserRequest extends FormRequest
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255', 
             'email' => 'required|max:255|email|unique:users,email',
-            'age' => 'required|numeric',
+            'age' => 'required|numeric|between:1,120',
             'password' => 'required|min:4|max:255',
             'confirm_password' => 'min:4|max:255|same:password',
-            'phone' => 'required|max:11'
+            'phone' => 'required|max:15|min:12'
         ];
     }
 
