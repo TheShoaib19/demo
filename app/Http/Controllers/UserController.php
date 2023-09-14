@@ -32,6 +32,8 @@ class UserController extends Controller
                 'password' => $req->password,
                 'phone' => $req->phone
             ]);
+            $user->assignRole('user');
+            
             if($user){
                 return redirect()->route('users')->with('message', 'User Added Successfully');
             }
@@ -53,22 +55,24 @@ class UserController extends Controller
 
     public function updateUser(UserUpdateRequest $req, $id){
         try {
-            $user = [
-                'first_name' => $req->first_name,
-                'last_name' => $req->last_name, 
-                'email' => $req->email,
-                'age' => $req->age,
-                'phone' => $req->phone
-            ];
-            if($req->has('password') && !empty($req->get('password'))){
-                $user['password'] = Hash::make($req->password);
-            }
-            User::where('id' , $id)->update($user);
+            $current_user = User::where('id' , $id)->first();
             
-            if($user){
+            $current_user->first_name=$req->first_name;
+            $current_user->last_name=$req->last_name;
+            $current_user->age=$req->age;
+            $current_user->phone=$req->phone;
+            if($req->has('password') && !empty($req->get('password'))){
+                $current_user->password = Hash::make($req->password);
+            }
+            $current_user->assignRole($req->role);
+            $current_user->update();
+            
+            if($current_user){
                 return redirect()->route('users')->with('message1', 'User Updated Successfully');
             }
-        } catch (Throwable $th)
+        }
+
+        catch (Throwable $th)
         {
             return redirect()->back()->with('user_update' , $th->getMessage());
         }

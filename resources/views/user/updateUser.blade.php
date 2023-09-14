@@ -4,10 +4,16 @@
         <div class="container-fluid">
             <div class="col-4"> 
                 <div class="row mb-2">
+                    <div>
+                        @if (session()->has('user_update'))
+                            <div class="alert alert-danger" id="alert">
+                                <button type="button" class="close" data-dismiss="alert">x</button>
+                                {{ session()->get('user_update') }}
+                            </div>
+                        @endif
+                    </div>
                     <h1>View Details</h1>
-                    @if (session()->has('user_update'))
-                        {{ session()->get('user_update') }}
-                    @endif
+                    {{-- {{ dd(auth()->user()->roles->toArray()) }} --}}
                     <form action="{{ route('updateUser', $data->id) }}" method="POST">
                         @csrf
                         <div class="mb-3">
@@ -76,6 +82,17 @@
                                 @enderror
                             </span>
                         </div>
+                        <div>
+                            <label class="form-label">Assign Role</label>
+                        </div>
+                        <div class="mb-3">
+                            <select name="role" id="role" onchange="getSelectedValue()">
+                                <option value selected>Select</option>
+                                <option value="admin">Admin</option>
+                                <option value="user">User</option>
+                            </select>
+                        </div>
+
                         <div class="mb-3">
                             <label class="form-label"></label>
                         </div>
@@ -86,6 +103,27 @@
             </div>
         </div>
     </div>
+    <script>
+        const phoneField = document.getElementById('phone');
+        phoneField.addEventListener('keydown', function(e){
+            if((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105) || ((e.keyCode == 187 && e.shiftKey) || e.keyCode == 107) || e.keyCode == 8 || e.keyCode == 9 || e.keyCode == 37 ||e.keyCode == 39){
+                return true;
+            }
+            e.preventDefault();
+        });
+        function getSelectedValue() {
+            const dropdown = document.getElementById("role");
+            const selectedOption = dropdown.value;
+            console.log(selectedOption);
+        }
+    </script>
+    <script type="text/javascript">
+        $("document").ready(function(){
+            setTimeout(function(){
+                $("div.alert").remove();
+            }, 10000);
+        });
+    </script>
 @endsection
 
 <!-- You can remove the div of class col-4 but it will stretch the fields to the corners -->

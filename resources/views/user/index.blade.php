@@ -82,8 +82,8 @@
               { data: 'view'}
       ]
         });
-      </script>
-      <script type="text/javascript">
+    </script>
+    <script type="text/javascript">
         $(document).ready(function() {
             $('#checkboxesMain').on('click', function(e) {
                 if ($(this).is(':checked', true)) {
@@ -143,8 +143,8 @@
                     $('#checkboxesMain').prop('checked', false);
             }
         }
-      </script>
-      <script type="text/javascript">
+    </script>
+    <script type="text/javascript">
         $("document").ready(function(){
             setTimeout(function(){
                 $("div.alert").remove();

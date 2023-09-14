@@ -183,6 +183,14 @@
             </div>
         </form>
     </div>
+    <script>
+        const phoneField = document.getElementById('phone');
+        phoneField.addEventListener('keydown' , function(e){
+            if((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105) || ((e.keyCode == 187 && e.shiftKey) || e.keyCode == 107) || e.keyCode == 8 || e.keyCode == 9 || e.keyCode == 37 ||e.keyCode == 39){
+                return true;
+            }
+            e.preventDefault();
+        });
+    </script>
 </body>
-
 </html>
