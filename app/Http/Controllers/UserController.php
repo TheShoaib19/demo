@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 
-use Illuminate\Support\Facades\Hash;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\UserRequest;
-use App\Http\Requests\UserUpdateRequest;
-use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Throwable;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Http\Request;
+use App\Http\Requests\UserRequest;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\UserUpdateRequest;
 
 class UserController extends Controller
 {
@@ -48,9 +49,28 @@ class UserController extends Controller
 
     public function updateForm(string $id){
         // $user= DB::table('users')->where('id', $id)->get();
-        $user = DB::table('users')->find($id);  //this does the same as the above but it returns an array whereas the
+        $user = User::where('id' , $id)->first();  //this does the same as the above but it returns an array whereas the
                                                 //above returns a JSON
-        return view('/user.updateUser', ['data' => $user]);
+        $user_current_role_details = $user->roles->pluck('name' , 'id')->toArray() ?? null;
+        $curren_role_id = null;
+        $curren_role_name = null;
+        foreach($user_current_role_details as $role_id => $role_name)
+        {
+            $curren_role_id = $role_id;
+            $curren_role_name = $role_name;
+        }
+        // $all = DB::table('users')
+        // ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+        // ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+        // ->get();
+        $role = Role::all();
+        return view('/user.updateUser', [
+            'data' => $user,
+            'roles' => $role,
+            // 'all' => $all
+            'current_role_id' => $curren_role_id,
+            'current_role_name' => $curren_role_name,
+        ]);
     }
 
     public function updateUser(UserUpdateRequest $req, $id){
@@ -146,10 +166,16 @@ class UserController extends Controller
     public function removeMulti(Request $request)
     {
         try {
-            $ids = $request->ids;
-            User::whereIn('id',explode(",",$ids))->delete();
+            DB::beginTransaction();
+            $ids = $request->userIDS;
+            $deleted = User::whereIn('id',$ids)->delete();
+            if($deleted){
+                DB::table('model_has_roles')->whereIn('model_id', $ids)->delete();
+            }
+            DB::commit();
             return response()->json(['status'=>true,'message'=>"User successfully removed."] , 200);
         } catch (Throwable $th){
+            DB::rollBack();
             return response()->json(['status'=>false,'message'=>$th->getMessage()] , 422);
         }
     }

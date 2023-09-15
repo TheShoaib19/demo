@@ -1,5 +1,6 @@
 @extends('layout.master')
 @section('content')
+{{-- {{ dd($all) }} --}}
     <div class="content-header">
         <div class="container-fluid">
             <div class="col-4"> 
@@ -13,7 +14,6 @@
                         @endif
                     </div>
                     <h1>View Details</h1>
-                    {{-- {{ dd(auth()->user()->roles->toArray()) }} --}}
                     <form action="{{ route('updateUser', $data->id) }}" method="POST">
                         @csrf
                         <div class="mb-3">
@@ -82,14 +82,23 @@
                                 @enderror
                             </span>
                         </div>
+                        {{-- <div class="mb-3">
+                            <label class="form-label">Current Role</label>
+                            <input type="text" value=" {{ $all->name }}" class="form-control @error('current_role') is-invalid @enderror" name="current_role">
+                            <span class="text-danger">
+                                @error('current_role')
+                                    {{ $message }}
+                                @enderror
+                            </span>
+                        </div> --}}
                         <div>
                             <label class="form-label">Assign Role</label>
                         </div>
                         <div class="mb-3">
                             <select name="role" id="role" onchange="getSelectedValue()">
-                                <option value selected>Select</option>
-                                <option value="admin">Admin</option>
-                                <option value="user">User</option>
+                                @foreach ($roles as $role)
+                                    <option value="{{ $role->id }}" {{ $current_role_id == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
+                                @endforeach
                             </select>
                         </div>
 

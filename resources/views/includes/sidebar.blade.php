@@ -13,6 +13,10 @@
       <img src="{{ asset('assets/dist/img/database.png') }}" alt="Data Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text font-weight-light">Users</span>
     </a>
+    <a href="{{ route('roles') }}" class="brand-link">
+      <img src="{{ asset('assets/dist/img/avatar.png') }}" alt="Role Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">Roles</span>
+    </a>
   @endcan
   <a href="{{ route('logout') }}" class="brand-link">
     <img src="{{ asset('assets/dist/img/logout.png') }}" alt="Logout Logo" class="brand-image img-circle elevation-3" style="opacity: .8">

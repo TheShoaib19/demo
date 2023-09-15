@@ -19,13 +19,13 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="heading">
-                    <h1>Users</h1>
+                    <h1>Roles</h1>
                     @if (session()->has('user_add'))
                         {{ session()->get('user_add') }}
                     @endif
                     <div class="topButtons">
                         <a class="btn btn-danger btn-sm mr-3 removeAll" id="visible" hidden="true">Delete</a>
-                        <a href="{{ route('newForm') }}" class="btn btn-success btn-sm mr-3">Add New</a>
+                        <a href="{{ route('newRoleForm') }}" class="btn btn-success btn-sm mr-3">Add New Role</a>
                     </div>
                 </div>
             </div>
@@ -34,16 +34,12 @@
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <table id="users" class="table table-striped table-bordered nowrap" style="width:100%">
+                <table id="roles" class="table table-striped table-bordered nowrap" style="width:100%">
                     <thead>
                         <tr>
                             <th><input type="checkbox" id="checkboxesMain"></th>
                             <th>ID</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Email</th>
-                            <th>Age</th>
-                            <th>Phone</th>
+                            <th>Role Name</th>
                             <th>View</th>
                         </tr>
                     </thead>
@@ -52,13 +48,13 @@
         </div>
     </div>
     <script>
-        new DataTable('#users',{
+        new DataTable('#roles',{
           processing: true,
           serverSide: true,
           responsive: true,
           order: [[1 , 'asc']],
           ajax: {
-            url: "{{route('getUsers')}}",
+            url: "{{route('getRoles')}}",
             type: "POST",
             dataType: "JSON",
             data: {
@@ -74,11 +70,7 @@
           columns: [
               { data: 'checkbox'},
               { data: 'id' },
-              { data: 'first_name' },
-              { data: 'last_name' },
-              { data: 'email' },
-              { data: 'age' },
-              { data: 'phone' },
+              { data: 'name' },
               { data: 'view'}
       ]
         });
@@ -101,15 +93,14 @@
                     alert("Choose min one item to remove.");
                 } else {
                     if (confirm("Are you sure?")) {
+                        var stuId = userIdArr.join(",");
                         $.ajax({
-                            url: "{{ url('delete-all') }}",
+                            url: "{{ url('deleteRoles') }}",
                             type: 'DELETE',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
-                            data: {
-                                userIDS : userIdArr
-                            },
+                            data: 'ids=' + stuId,
                             success: function(data) {
                                 if (data['status'] == true) {
                                     $(".checkbox:checked").each(function() {
@@ -136,7 +127,7 @@
             else{
                 $('#visible').prop('hidden', false);
             }
-        });
+        }); 
         function individual(){
             if ($('.checkbox:checked').length == $('.checkbox').length){
                     $('#checkboxesMain').prop('checked', true);

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,9 +35,17 @@ Route::middleware('auth')->group(function () {
             Route::get('/view/{id}', 'updateForm')->name('updateForm'); //shows the 
                         //'updateUser.blade.php. when it is called, meaning the form with filled values
             Route::post('update/{id}', 'updateUser')->name('updateUser');
-                        //runs when the update is clicked.
-            Route::get('/delete/{id}', 'deleteUser')->name('deleteUser');
-            Route::get('deleteAll', 'deleteAllUsers')->name('deleteAll');  
+                        //runs when the update is clicked.  
+        });
+
+        Route::view('newRole', '/roles.addRole')->name('newRoleForm'); 
+        Route::controller(RolesController::class)->group(function(){
+            Route::get('/roles', 'index')->name('roles');
+            Route::post('/roles/getRoles/', 'getRoles')->name('getRoles');
+            Route::post('/addRole','addRole')->name('addRole');
+            Route::get('/role/{id}', 'updateRoleForm')->name('updateRoleForm');
+            Route::post('updateRole/{id}', 'updateRole')->name('updateRole');
+            Route::delete('deleteRoles', 'removeRoles');
         });
 
     }); 
